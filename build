@@ -1,0 +1,64 @@
+#! /bin/bash
+
+#---build---
+
+name="face-blur.zip"
+venv="/tmp/face-blur-venv"
+
+log () {
+    echo " + $1" | tee -a build.log
+}
+
+clean () {
+    log 'Clean previous package build'
+    rm -rf build
+}
+
+add_files () {
+    log 'Add node files'
+    cp main.py build/lambda_function.py
+    pip install . -t build >> build.log
+}
+
+add_libraries_dependencies () {
+    log 'Add dependencies'
+    pip install -r requirements.txt -t build >> build.log
+}
+
+make_package () {
+    log 'Create node package archive'
+    cd build
+    zip -r "../$name" * >> build.log
+    cd ..
+}
+
+build () {
+    log '------------------------------------------'
+    log 'Building node archive'
+    clean
+    mkdir build
+    add_files
+    add_libraries_dependencies
+    make_package
+    clean
+    log "Build complete : $name"
+}
+
+#---publish---
+
+publish () {
+    log '------------------------------------------'
+    log "Publishing $name to Lambda function"
+    virtualenv -p python3 $venv >> build.log
+    $venv/bin/pip install awscli >> build.log
+    $venv/bin/aws lambda update-function-code --function-name face-blur --zip-file "fileb://$name"
+    rm $name
+    rm -rf $venv
+    log 'Publishing node complete.'
+}
+
+
+build
+#publish
+
+log 'Task complete. Details available in build.log'
