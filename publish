@@ -15,9 +15,8 @@ clean () {
 }
 
 add_files () {
-    log 'Add node files'
+    log 'Add files'
     cp main.py build/lambda_function.py
-    pip install . -t build >> build.log
 }
 
 add_libraries_dependencies () {
@@ -26,7 +25,7 @@ add_libraries_dependencies () {
 }
 
 make_package () {
-    log 'Create node package archive'
+    log 'Create package archive'
     cd build
     zip -r "../$name" * >> build.log
     cd ..
@@ -34,7 +33,7 @@ make_package () {
 
 build () {
     log '------------------------------------------'
-    log 'Building node archive'
+    log 'Building archive'
     clean
     mkdir build
     add_files
@@ -54,7 +53,7 @@ publish () {
     $venv/bin/aws lambda update-function-code --function-name face-blur --zip-file "fileb://$name"
     rm $name
     rm -rf $venv
-    log 'Publishing node complete.'
+    log 'Publishing complete.'
 }
 
 
