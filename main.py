@@ -26,8 +26,3 @@ def lambda_handler(event, context):
 
     _, image = cv2.imencode(".jpg", frame)
     return image.tostring()
-
-
-with open("fussoir.jpg", "rb") as r:
-    with open("/tmp/fussoir-res.jpg", "wb") as f:
-        f.write(lambda_handler({"body": r.read()}, None))
