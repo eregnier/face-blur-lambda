@@ -1,3 +1,5 @@
+**Not tested yet**
+
 AWS Lambda image face blur
 ==========================
 
